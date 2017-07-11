@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+        <!--icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!--  Meta  -->
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" type="text/css" href="mystyle.css">
+        <title>Timer</title>
+        <script>
+                var minBreak =5;
+                var minWork =25;
+                function reset(){
+                    minBreak =5;
+                    minWork =25;    
+                    document.getElementById("timeWork").innerHTML = "<button onclick=\"timechange(false,2)\" class=\"badge\">-</button> "+minWork +":00 <button onclick=\"timechange(true,2)\" class=\"badge\">+</button>";
+                    document.getElementById("timer").innerHTML = minWork;    
+                    document.getElementById("timeBreak").innerHTML = "<button onclick=\"timechange(false,1)\" class=\"badge\">-</button> "+minBreak +":00 <button onclick=\"timechange(true,1)\" class=\"badge\">+</button>";
+                    clearInterval();
+                }
+                function timechange(isInc,type){
+                    if(type === 2 && minWork>0){
+                        isInc?minWork++:minWork--;
+                        document.getElementById("timeWork").innerHTML = "<button onclick=\"timechange(false,2)\" class=\"badge\">-</button> "+minWork +":00 <button onclick=\"timechange(true,2)\" class=\"badge\">+</button>";
+                        document.getElementById("timer").innerHTML = minWork;
+                    }
+                    if(type === 1 && minBreak>0){
+                        isInc?minBreak++:minBreak--;
+                        document.getElementById("timeBreak").innerHTML = "<button onclick=\"timechange(false,1)\" class=\"badge\">-</button> "+minBreak +":00 <button onclick=\"timechange(true,1)\" class=\"badge\">+</button>";
+                    }
+                }
+                function output(val){
+                    minWork =Math.trunc(val/60) ;
+                    var sec = Math.trunc(val%60);
+                    document.getElementById("timer").innerHTML = minWork +" :"+sec;
+                    }
+                function timeconvert(type,work){
+                    if(type==="proper"){
+                        var sec=00;
+                        var time = ((work === 1) ? (minWork) : (minBreak))*60  +sec;
+                    }
+                    return time
+                }
+                var interval;
+                var timeOn=false;
+                var breaktime=false;
+                function timer(){
+                    document.getElementById("int-btn").innerHTML = "Stop" ;
+                    console.log("wf");
+                    if(!timeOn){
+                    console.log("wf2");
+                        timeOn= true;
+                        var sec= timeconvert("proper",1);
+                        interval=setInterval(function(){
+                            if(sec<0){
+                                if(breaktime){
+                                    document.getElementById("int-btn").innerHTML = "Start";
+                                    alert("Your Break Has Ended.");
+                                    reset();
+                                    if(confirm("Press Ok If You want to Restart the Timer")){
+                                        timer();
+                                    }
+                                    else{
+                                        timeOn = false;
+                                        console.log("End");
+                                        clearInterval(interval);
+                                    }
+                                }
+                                else{
+                                sec = timeconvert("proper",2);
+                                alert("Your Break Has Started. Press Ok and have fun");
+                                breaktime=true;}
+                            }
+                            else{
+                                output(sec);
+                                sec--;
+                            }
+                        },1000);
+                    }
+                    else{
+                        clearInterval(interval);
+                        timeOn=false;
+                    }
+                }
+        </script>
+    </head>
+    <body>
+        <h1 id="session" >Pomodoro Clock</h1>
+        <p>
+            <br>
+            <div id="MainTimer">
+                <div class ="time" >
+                    <p>Work Time <br> <div  id="timeWork"> <button onclick="timechange(false,2)" class="badge">-</button> 25:00 <button onclick="timechange(true,2)" class="badge">+</button>
+                    </div>
+                    </p>
+                </div>
+                <div class ="time" >
+                    <p>Break     <br> <div id="timeBreak"> <button onclick="timechange(false,1)" class="badge">-</button>5:00 <button onclick="timechange(true,1)" class="badge">+</button>
+                    </div>
+                    </p>
+                    
+                </div>
+                <div class ="time" id="timer" onclick="timer()">25:00 </div>
+                <button id="int-btn" onclick="timer()">Start</button>
+                <button id="reset" onclick="reset()">Reset</button>
+            </div>
+        </p>
+    </body>
+</html>
